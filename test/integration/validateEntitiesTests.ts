@@ -3,7 +3,7 @@ import { convertToEntities } from '../../src/convertToEntities';
 import { converToFiles } from '../../src/convertToFiles';
 // import { columnTypeToTypescript } from '../../src/columnTypeToTypescript';
 import { getTableMetadata } from '../../src/getTableMetadata';
-import { } from '../testEntities';
+// import { } from '../testEntities';
 
 
 describe('validateEntitiesTests', () => {

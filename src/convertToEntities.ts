@@ -29,6 +29,12 @@ export function convertToEntities(tables: ITableMetadata[], config: IGeneratorCo
 
     for (const table of tables) {
 
+        if (config.ignoreTables) {
+            if (config.ignoreTables.includes(table.name)) {
+                continue;
+            }
+        }
+
         let className = table.name;
 
         if (config && config.entityNameConversion && config.entityNameConversion.inflections) {
@@ -55,6 +61,19 @@ export function convertToEntities(tables: ITableMetadata[], config: IGeneratorCo
         result.push(entity);
 
         for (const column of table.columns) {
+
+            try {
+                columnTypeToTypescript(column.type);
+            } catch (_error) {
+                console.log('config.ignoreTables: ', config.ignoreTables);
+                console.log('table.name: ', table.name);
+                if (config.ignoreTables) {
+                    // if (config.ignoreTables.includes(table.name)) {
+                    console.log('config.ignoreTables.includes(table.name): ', config.ignoreTables.includes(table.name));
+                }
+                throw new Error(`Cannot convert column type "${column.type}" of column ${table.name}.${column.name}`);
+            }
+
             entity.properties.push({
                 source: column,
                 typescriptType: columnTypeToTypescript(column.type),
