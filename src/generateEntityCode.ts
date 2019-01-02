@@ -31,7 +31,7 @@ const imports = "import { Column, Entity } from '@wwwouter/typed-knex';\n";
 // };
 
 
-export function generateEntity(entityMetadata: IEntityMetadata) {
+export function generateEntityCode(entityMetadata: IEntityMetadata) {
 
     let result = '';
 

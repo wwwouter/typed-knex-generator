@@ -1,7 +1,9 @@
 import * as changeCase from 'change-case';
+import * as path from 'path';
 import * as pluralize from 'pluralize';
 import { columnTypeToTypescript } from './columnTypeToTypescript';
 import { IColumnMetadata, ITableMetadata } from './getTableMetadata';
+import { IGeneratorConfig } from './IGeneratorConfig';
 
 export interface IPropertyMetadata {
     source: IColumnMetadata;
@@ -14,14 +16,11 @@ export interface IEntityMetadata {
     source: ITableMetadata;
     tableName: string;
     className: string;
+    classFilename: string;
+    classFilePath: string;
+    classFullFilename: string;
 }
 
-export interface IGeneratorConfig {
-    entityNameConversion?: {
-        inflections?: 'pascalCase' | 'camelCase' | 'singular' | 'plural' | string[]
-    };
-
-}
 
 
 export function convertToEntities(tables: ITableMetadata[], config: IGeneratorConfig) {
@@ -49,6 +48,9 @@ export function convertToEntities(tables: ITableMetadata[], config: IGeneratorCo
             properties: [],
             tableName: table.name,
             className: className,
+            classFilename: className + '.ts',
+            classFilePath: './',
+            classFullFilename: path.join('./', className + '.ts'),
         } as IEntityMetadata;
         result.push(entity);
 

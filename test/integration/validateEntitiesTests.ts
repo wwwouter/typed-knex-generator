@@ -1,6 +1,6 @@
 import * as Knex from 'knex';
 import { convertToEntities } from '../../src/convertToEntities';
-import { generateEntity } from '../../src/generateEntity';
+import { converToFiles } from '../../src/convertToFiles';
 // import { columnTypeToTypescript } from '../../src/columnTypeToTypescript';
 import { getTableMetadata } from '../../src/getTableMetadata';
 import { } from '../testEntities';
@@ -54,8 +54,11 @@ describe('validateEntitiesTests', () => {
         const entities = convertToEntities(tablesMetadata, { entityNameConversion: { inflections: ['pascalCase', 'singular'] } });
         console.log('entities: ', entities);
 
-        const code = generateEntity(entities[0]);
-        console.log('code: ', code);
+        // const code = generateEntityCode(entities[0]);
+        // console.log('code: ', code);
+
+        const files = converToFiles(entities);
+        console.log('files: ', files);
 
 
 
