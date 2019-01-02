@@ -34,7 +34,7 @@ export async function listTables(knex: Knex): Promise<string[]> {
     }
 
     const results = await knex.raw(query, bindings);
-    console.log('results: ', results);
+    // console.log('results: ', results);
 
     const rows = results.rows ? results.rows : results;
 
