@@ -1,34 +1,41 @@
 
 
 
+import * as fs from 'fs';
+import * as getopts from 'getopts';
 import * as Knex from 'knex';
 import { convertToEntities } from './convertToEntities';
 import { converToFiles } from './convertToFiles';
 import { getTableMetadata } from './getTableMetadata';
 
 
+
 async function run() {
     console.log('Start generating');
+    const argv = getopts(process.argv.slice(2));
 
-    console.log('process.argv[2]: ', process.argv[2]);
-    const a = require(process.argv[2]);
-    console.log('a: ', a.knex);
+    const config = require(argv.config);
 
 
     let knex = undefined as Knex | undefined;
     try {
 
-        knex = Knex(a.knex);
+        knex = Knex(config.knex);
 
         const tablesMetadata = await getTableMetadata(knex);
         console.log('tablesMetadata: ', tablesMetadata);
 
-        const entities = convertToEntities(tablesMetadata, a.generator);
+        const entities = convertToEntities(tablesMetadata, config.generator);
         console.log('entities: ', entities);
 
 
         const files = converToFiles(entities);
         console.log('files: ', files);
+
+        for (const file of files) {
+
+            fs.writeFileSync(file.path, file.contents);
+        }
 
     } catch (error) {
         console.log(error);
