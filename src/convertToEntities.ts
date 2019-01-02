@@ -97,12 +97,12 @@ export function convertToEntities(tables: ITableMetadata[], config: IGeneratorCo
             try {
                 columnTypeToTypescript(column.type);
             } catch (_error) {
-                console.log('config.ignoreTables: ', config.ignoreTables);
-                console.log('table.name: ', table.name);
-                if (config.ignoreTables) {
-                    // if (config.ignoreTables.includes(table.name)) {
-                    console.log('config.ignoreTables.includes(table.name): ', config.ignoreTables.includes(table.name));
-                }
+                // console.log('config.ignoreTables: ', config.ignoreTables);
+                // console.log('table.name: ', table.name);
+                // if (config.ignoreTables) {
+                // if (config.ignoreTables.includes(table.name)) {
+                // console.log('config.ignoreTables.includes(table.name): ', config.ignoreTables.includes(table.name));
+                // }
                 throw new Error(`Cannot convert column type "${column.type}" of column ${table.name}.${column.name}`);
             }
 

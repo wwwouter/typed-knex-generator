@@ -13,7 +13,7 @@ import { getTableMetadata } from './getTableMetadata';
 
 
 async function run() {
-    console.log('Start generating');
+    console.log('Start generating...');
     const argv = getopts(process.argv.slice(2));
 
     const config = require(argv.config);
@@ -27,14 +27,14 @@ async function run() {
         const basePath = '.';
 
         const tablesMetadata = await getTableMetadata(knex);
-        console.log('tablesMetadata: ', tablesMetadata);
+        // console.log('tablesMetadata: ', tablesMetadata);
 
         const entities = convertToEntities(tablesMetadata, config.generator);
-        console.log('entities: ', entities);
+        // console.log('entities: ', entities);
 
 
         const files = converToFiles(entities);
-        console.log('files: ', files);
+        // console.log('files: ', files);
 
         for (const file of files) {
 
@@ -54,6 +54,8 @@ async function run() {
     if (knex !== undefined) {
         knex.destroy();
     }
+
+    console.log('Done');
 }
 
 run();
