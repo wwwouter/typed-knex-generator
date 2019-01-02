@@ -1,11 +1,11 @@
 
 
 
-import * as mkdirp from 'mkdirp';
 import * as fs from 'fs';
-import * as path from 'path';
 import * as getopts from 'getopts';
 import * as Knex from 'knex';
+import * as mkdirp from 'mkdirp';
+import * as path from 'path';
 import { convertToEntities } from './convertToEntities';
 import { converToFiles } from './convertToFiles';
 import { getTableMetadata } from './getTableMetadata';
