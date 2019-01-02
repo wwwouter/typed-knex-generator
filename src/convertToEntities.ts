@@ -20,13 +20,7 @@ export interface IGeneratorConfig {
     entityNameConversion?: {
         inflections?: 'pascalCase' | 'camelCase' | 'singular' | 'plural' | string[]
     };
-    //     entityNameConversion: {
-    //         change: 'signulirez',
-    //         casing: 'pascal',
-    //         overriddes: [
-    //             { from: 'Sheeple', to: 'Person' },
-    //         ],
-    //     },
+
 }
 
 
@@ -40,21 +34,13 @@ export function convertToEntities(tables: ITableMetadata[], config: IGeneratorCo
 
         if (config && config.entityNameConversion && config.entityNameConversion.inflections) {
             for (const inflection of config.entityNameConversion.inflections) {
-                switch (inflection) {
-                    case 'pascalCase':
-                        className = changeCase.pascalCase(className);
-                        break;
-                    case 'camelCase':
-                        className = changeCase.camelCase(className);
-                        break;
-                    case 'singular':
-                        className = pluralize.singular(className);
-                        break;
-                    case 'plural':
-                        className = pluralize.plural(className);
-                        break;
-                    default:
-                        throw new Error(`Unknown inflection "${inflection}"`);
+
+                if ((changeCase as any)[inflection]) {
+                    className = (changeCase as any)[inflection](className);
+                } else if ((pluralize as any)[inflection]) {
+                    className = (pluralize as any)[inflection](className);
+                } else {
+                    throw new Error(`Unknown inflection "${inflection}"`);
                 }
             }
         }
