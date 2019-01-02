@@ -7,6 +7,7 @@
     "flat": "4.1.0",
     "getopts": "2.2.3",
     "lodash": "4.17.11",
+    "mkdirp": "^0.5.1",
     "pluralize": "7.0.0",
     "reflect-metadata": "0.1.12"
   },
@@ -44,6 +45,7 @@
     "@types/flat": "0.0.28",
     "@types/getopts": "2.0.0",
     "@types/lodash": "4.14.119",
+    "@types/mkdirp": "^0.5.2",
     "@types/mocha": "5.2.5",
     "@types/pluralize": "0.0.29",
     "@types/sqlite3": "3.1.3",

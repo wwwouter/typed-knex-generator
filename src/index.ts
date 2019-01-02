@@ -1,7 +1,9 @@
 
 
 
+import * as mkdirp from 'mkdirp';
 import * as fs from 'fs';
+import * as path from 'path';
 import * as getopts from 'getopts';
 import * as Knex from 'knex';
 import { convertToEntities } from './convertToEntities';
@@ -22,6 +24,8 @@ async function run() {
 
         knex = Knex(config.knex);
 
+        const basePath = '.';
+
         const tablesMetadata = await getTableMetadata(knex);
         console.log('tablesMetadata: ', tablesMetadata);
 
@@ -34,7 +38,13 @@ async function run() {
 
         for (const file of files) {
 
-            fs.writeFileSync(file.path, file.contents);
+            const completePath = path.join(basePath, file.path);
+
+            mkdirp.sync(path.dirname(completePath));
+
+            // mkdirp.sync()
+
+            fs.writeFileSync(path.join(basePath, file.path), file.contents);
         }
 
     } catch (error) {
