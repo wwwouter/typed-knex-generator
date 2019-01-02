@@ -4,6 +4,7 @@ import * as pluralize from 'pluralize';
 import { columnTypeToTypescript } from './columnTypeToTypescript';
 import { IColumnMetadata, ITableMetadata } from './getTableMetadata';
 import { IGeneratorConfig } from './IGeneratorConfig';
+import { template } from 'lodash';
 
 export interface IPropertyMetadata {
     source: IColumnMetadata;
@@ -22,10 +23,31 @@ export interface IEntityMetadata {
 }
 
 
+function inflect(text: string, inflections: string[]) {
+    let result = text;
+    for (const inflection of inflections) {
+
+        if ((changeCase as any)[inflection]) {
+            result = (changeCase as any)[inflection](result);
+        } else if ((pluralize as any)[inflection]) {
+            result = (pluralize as any)[inflection](result);
+        } else {
+            throw new Error(`Unknown inflection "${inflection}"`);
+        }
+    }
+    return result;
+}
+
 
 export function convertToEntities(tables: ITableMetadata[], config: IGeneratorConfig) {
 
     const result = [] as IEntityMetadata[];
+
+    let classFilePathTemplate;
+
+    if (config && config.classFilePath) {
+        classFilePathTemplate = template(config.classFilePath, { 'imports': { 'inflect': inflect } });
+    }
 
     for (const table of tables) {
 
@@ -38,25 +60,35 @@ export function convertToEntities(tables: ITableMetadata[], config: IGeneratorCo
         let className = table.name;
 
         if (config && config.entityNameConversion && config.entityNameConversion.inflections) {
-            for (const inflection of config.entityNameConversion.inflections) {
+            // for (const inflection of config.entityNameConversion.inflections) {
 
-                if ((changeCase as any)[inflection]) {
-                    className = (changeCase as any)[inflection](className);
-                } else if ((pluralize as any)[inflection]) {
-                    className = (pluralize as any)[inflection](className);
-                } else {
-                    throw new Error(`Unknown inflection "${inflection}"`);
-                }
-            }
+            //     if ((changeCase as any)[inflection]) {
+            //         className = (changeCase as any)[inflection](className);
+            //     } else if ((pluralize as any)[inflection]) {
+            //         className = (pluralize as any)[inflection](className);
+            //     } else {
+            //         throw new Error(`Unknown inflection "${inflection}"`);
+            //     }
+            // }
+            className = inflect(className, config.entityNameConversion.inflections);
         }
+
+        const classFilename = className + '.ts';
+        let classFilePath = './';
+
+        if (classFilePathTemplate) {
+            classFilePath = classFilePathTemplate({ tableName: table.name, className });
+        }
+
+
         const entity = {
             source: table,
             properties: [],
             tableName: table.name,
             className: className,
-            classFilename: className + '.ts',
-            classFilePath: './',
-            classFullFilename: path.join('./', className + '.ts'),
+            classFilename: classFilename,
+            classFilePath: classFilePath,
+            classFullFilename: path.join(classFilePath, classFilename),
         } as IEntityMetadata;
         result.push(entity);
 

@@ -5,6 +5,7 @@
   "dependencies": {
     "change-case": "3.0.2",
     "flat": "4.1.0",
+    "lodash": "^4.17.11",
     "pluralize": "7.0.0",
     "reflect-metadata": "0.1.12"
   },
@@ -40,6 +41,7 @@
     "@types/chai-as-promised": "7.1.0",
     "@types/change-case": "2.3.1",
     "@types/flat": "0.0.28",
+    "@types/lodash": "^4.14.119",
     "@types/mocha": "5.2.5",
     "@types/pluralize": "0.0.29",
     "@types/sqlite3": "3.1.3",

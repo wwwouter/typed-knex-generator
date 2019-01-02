@@ -1,8 +1,9 @@
 
 export interface IGeneratorConfig {
     entityNameConversion?: {
-        inflections?: 'pascalCase' | 'camelCase' | 'singular' | 'plural' | string[]
+        inflections?: string[]
     };
     ignoreTables?: string[];
+    classFilePath?: string;
 
 }
