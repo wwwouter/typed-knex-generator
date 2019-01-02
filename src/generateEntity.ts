@@ -1,3 +1,4 @@
+import { IEntityMetadata } from './convertToEntities';
 
 
 // import { Column, Entity } from '@wwwouter/typed-knex';
@@ -11,25 +12,36 @@
 const imports = "import { Column, Entity } from '@wwwouter/typed-knex';\n";
 
 
-interface ITableData {
-    name: string;
+// interface ITableData {
+//     name: string;
 
-    columns: { name: string, primary: boolean, typescriptType: string, isNullable: boolean }[];
-}
+//     columns: { name: string, primary: boolean, typescriptType: string, isNullable: boolean }[];
+// }
+
+// starts specs? /:UP/some/[:LC]Controller/file.{full}.ts
+
+// const options = {
+//     entityNameConversion: {
+//         change: 'signulirez',
+//         casing: 'pascal',
+//         overriddes: [
+//             { from: 'Sheeple', to: 'Person' },
+//         ],
+//     },
+// };
 
 
-
-export function generateEntity(tableData: ITableData) {
+export function generateEntity(entityMetadata: IEntityMetadata) {
 
     let result = '';
 
     result += imports;
 
-    result += `@Entity('${tableData.name}')\n`;
-    result += `export class ${tableData.name} {\n`;
-    for (const column of tableData.columns) {
+    result += `@Entity('${entityMetadata.tableName}')\n`;
+    result += `export class ${entityMetadata.className} {\n`;
+    for (const property of entityMetadata.properties) {
 
-        result += `@Column(${column.primary ? '{primary: true}' : ''}) public ${column.name}! : ${column.typescriptType}${column.isNullable ? '|null' : ''};\n`;
+        result += `@Column(${property.source.primary ? '{primary: true}' : ''}) public ${property.propertyName}! : ${property.typescriptType}${property.source.nullable ? '|null' : ''};\n`;
     }
     result += '}\n';
 

@@ -1,11 +1,9 @@
-import { assert } from 'chai';
 import * as Knex from 'knex';
-import { getPrimaryKeyName } from '../../src/getPrimaryKeyName';
-import { listTables } from '../../src/listTables';
-import { validateEntities } from '../../src/validateEntities';
-import { } from '../testEntities';
+import { convertToEntities } from '../../src/convertToEntities';
 import { generateEntity } from '../../src/generateEntity';
-import { columnTypeToTypescript } from '../../src/columnTypeToTypescript';
+// import { columnTypeToTypescript } from '../../src/columnTypeToTypescript';
+import { getTableMetadata } from '../../src/getTableMetadata';
+import { } from '../testEntities';
 
 
 describe('validateEntitiesTests', () => {
@@ -18,7 +16,7 @@ describe('validateEntitiesTests', () => {
             connection: { filename: ':memory:' },
         });
 
-        await knex.schema.createTable('User', (table) => {
+        await knex.schema.createTable('users', (table) => {
             table.uuid('id')
                 .primary()
                 .unique()
@@ -29,40 +27,46 @@ describe('validateEntitiesTests', () => {
 
         });
 
-        const tables = await listTables(knex);
-        console.log('tables: ', tables);
+        const tablesMetadata = await getTableMetadata(knex);
+        console.log('tablesMetadata: ', tablesMetadata);
 
-        const columnInfo = await knex(tables[0]).columnInfo();
-        console.log('columnInfo: ', columnInfo);
+        // const tables = await listTables(knex);
+        // console.log('tables: ', tables);
 
-        const primaryKeyName = await getPrimaryKeyName(knex, tables[0]);
-        console.log('primaryKeyName: ', primaryKeyName);
+        // const columnInfo = await knex(tables[0]).columnInfo();
+        // console.log('columnInfo: ', columnInfo);
 
-        const columnsData = [];
+        // const primaryKeyName = await getPrimaryKeyName(knex, tables[0]);
+        // console.log('primaryKeyName: ', primaryKeyName);
 
-        const columnNames = Object.keys(columnInfo);
-        for (const columnName of columnNames) {
-            columnsData.push({
-                name: columnName,
-                primary: columnName === primaryKeyName,
-                typescriptType: columnTypeToTypescript((columnInfo as any)[columnName].type),
-                isNullable: (columnInfo as any)[columnName].nullable,
-            });
-        }
+        // const columnsData = [];
 
-        const code = generateEntity({ name: tables[0], columns: columnsData });
+        // const columnNames = Object.keys(columnInfo);
+        // for (const columnName of columnNames) {
+        //     columnsData.push({
+        //         name: columnName,
+        //         primary: columnName === primaryKeyName,
+        //         typescriptType: columnTypeToTypescript((columnInfo as any)[columnName].type),
+        //         isNullable: (columnInfo as any)[columnName].nullable,
+        //     });
+        // }
+
+        const entities = convertToEntities(tablesMetadata, { entityNameConversion: { inflections: ['pascalCase', 'singular'] } });
+        console.log('entities: ', entities);
+
+        const code = generateEntity(entities[0]);
         console.log('code: ', code);
 
 
 
-        try {
+        // try {
 
-            await validateEntities(knex);
-            assert.isFalse(true);
-            // tslint:disable-next-line:no-empty
-        } catch (_error) {
+        //     await validateEntities(knex);
+        //     assert.isFalse(true);
+        //     // tslint:disable-next-line:no-empty
+        // } catch (_error) {
 
-        }
+        // }
 
         knex.destroy();
 

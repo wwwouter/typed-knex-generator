@@ -3,7 +3,7 @@ import * as Knex from 'knex';
 
 // https://github.com/tgriesser/knex/issues/360#issuecomment-406483016
 
-export async function listTables(knex: Knex) {
+export async function listTables(knex: Knex): Promise<string[]> {
     let query: string;
     let bindings = [] as string[];
 
