@@ -1,10 +1,10 @@
 import * as changeCase from 'change-case';
+import { template } from 'lodash';
 import * as path from 'path';
 import * as pluralize from 'pluralize';
 import { columnTypeToTypescript } from './columnTypeToTypescript';
 import { IColumnMetadata, ITableMetadata } from './getTableMetadata';
 import { IGeneratorConfig } from './IGeneratorConfig';
-import { template } from 'lodash';
 
 export interface IPropertyMetadata {
     source: IColumnMetadata;
@@ -58,6 +58,12 @@ export function convertToEntities(tables: ITableMetadata[], config: IGeneratorCo
         }
 
         let className = table.name;
+        if (config && config.entityNameConversion && config.entityNameConversion.overrides) {
+            const override = config.entityNameConversion.overrides.find(i => i.tableName === table.name);
+            if (override) {
+                className = override.override;
+            }
+        }
 
         if (config && config.entityNameConversion && config.entityNameConversion.inflections) {
             // for (const inflection of config.entityNameConversion.inflections) {
