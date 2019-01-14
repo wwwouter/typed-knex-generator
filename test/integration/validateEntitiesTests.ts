@@ -3,6 +3,8 @@ import { convertToEntities } from '../../src/convertToEntities';
 import { converToFiles } from '../../src/convertToFiles';
 // import { columnTypeToTypescript } from '../../src/columnTypeToTypescript';
 import { getTableMetadata } from '../../src/getTableMetadata';
+import { getForeignKeys } from '../../src/getForeignKeys';
+import { listTables } from '../../src/listTables';
 // import { } from '../testEntities';
 
 
@@ -16,6 +18,8 @@ describe('validateEntitiesTests', () => {
             connection: { filename: ':memory:' },
         });
 
+
+
         await knex.schema.createTable('users', (table) => {
             table.uuid('id')
                 .primary()
@@ -26,11 +30,26 @@ describe('validateEntitiesTests', () => {
             table.string('optionalField');
 
         });
+        await knex.schema.createTable('companies', (table) => {
+            table.uuid('id')
+                .primary()
+                .unique()
+                .notNullable();
+            table.string('name')
+                .notNullable();
+            table.uuid('userId')
+                .references('id')
+                .inTable('users')
+                .notNullable();
+            table.string('optionalField');
+
+        });
+
 
         const tablesMetadata = await getTableMetadata(knex);
-        console.log('tablesMetadata: ', tablesMetadata);
+        // console.log('tablesMetadata: ', tablesMetadata);
 
-        // const tables = await listTables(knex);
+        const tables = await listTables(knex);
         // console.log('tables: ', tables);
 
         // const columnInfo = await knex(tables[0]).columnInfo();
@@ -38,6 +57,12 @@ describe('validateEntitiesTests', () => {
 
         // const primaryKeyName = await getPrimaryKeyName(knex, tables[0]);
         // console.log('primaryKeyName: ', primaryKeyName);
+
+        for (const table of tables) {
+
+            const foreignKeyName = await getForeignKeys(knex, table);
+            console.log('foreignKeyName: ', foreignKeyName, ' table ', table);
+        }
 
         // const columnsData = [];
 

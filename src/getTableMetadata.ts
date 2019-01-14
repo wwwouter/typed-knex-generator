@@ -1,6 +1,8 @@
 
 import * as Knex from 'knex';
+import { getForeignKeys } from './getForeignKeys';
 import { getPrimaryKeyName } from './getPrimaryKeyName';
+import { IForeignKey } from './IForeignKey';
 import { listTables } from './listTables';
 
 export interface IColumnMetadata {
@@ -14,6 +16,7 @@ export interface IColumnMetadata {
 export interface ITableMetadata {
     name: string;
     columns: IColumnMetadata[];
+    foreignKeys: IForeignKey[];
 }
 
 
@@ -25,10 +28,12 @@ export async function getTableMetadata(knex: Knex): Promise<ITableMetadata[]> {
     const tables = await listTables(knex);
     for (const table of tables) {
 
-        const tableMetadata = { name: table, columns: [] } as ITableMetadata;
+        const tableMetadata = { name: table, columns: [], foreignKeys: [] } as ITableMetadata;
         result.push(tableMetadata);
 
         const primaryKeyName = await getPrimaryKeyName(knex, table);
+
+        tableMetadata.foreignKeys = await getForeignKeys(knex, table);
 
         const tableColumnInfo = await knex(table).columnInfo();
         const columnNames = Object.keys(tableColumnInfo);

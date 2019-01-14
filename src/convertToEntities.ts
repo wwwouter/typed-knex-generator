@@ -20,6 +20,7 @@ export interface IEntityMetadata {
     classFilename: string;
     classFilePath: string;
     classFullFilename: string;
+    entitiesToImport: IEntityMetadata[];
 }
 
 
@@ -95,6 +96,7 @@ export function convertToEntities(tables: ITableMetadata[], config: IGeneratorCo
             classFilename: classFilename,
             classFilePath: classFilePath,
             classFullFilename: path.join(classFilePath, classFilename),
+            entitiesToImport: [],
         } as IEntityMetadata;
         result.push(entity);
 
@@ -117,6 +119,20 @@ export function convertToEntities(tables: ITableMetadata[], config: IGeneratorCo
                 typescriptType: columnTypeToTypescript(column.type),
                 propertyName: column.name,
             });
+        }
+
+    }
+
+    for (const entity of result) {
+        for (const fk of entity.source.foreignKeys) {
+            const referencedEntity = result.find(i => i.source.name === fk.tableName)!;
+
+            entity.properties.push({
+                source: entity.source.columns.find(i => i.name === fk.fromColumn)!,
+                typescriptType: referencedEntity.className,
+                propertyName: referencedEntity.className,
+            });
+            entity.entitiesToImport.push(referencedEntity);
         }
     }
 

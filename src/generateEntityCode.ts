@@ -37,6 +37,10 @@ export function generateEntityCode(entityMetadata: IEntityMetadata) {
 
     result += imports;
 
+    for (const entityImport of entityMetadata.entitiesToImport) {
+        result += `import ${entityImport.className} from './${entityImport.classFullFilename}')`;
+    }
+
     result += `@Entity('${entityMetadata.tableName}')\n`;
     result += `export class ${entityMetadata.className} {\n`;
     for (const property of entityMetadata.properties) {
